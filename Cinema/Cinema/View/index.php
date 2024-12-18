@@ -26,7 +26,7 @@ if (isset($_POST['submit'])) {
     <link rel="stylesheet" href="../CSS/header.css">
     <style>
         body {
-             background: linear-gradient(120deg, #f8f9fa, #e9ecef, #dee2e6);
+            background: linear-gradient(120deg, #f8f9fa, #e9ecef, #dee2e6);
             overflow-x: hidden;
 
         }
@@ -57,6 +57,7 @@ if (isset($_POST['submit'])) {
         .content .logo img {
             width: 130px;
             height: 130px;
+            margin: auto;
         }
 
         .content:last-child {
@@ -169,11 +170,12 @@ if (isset($_POST['submit'])) {
 
         }
 
-        #tit {
+        .tit {
             /* padding-left: 5%; */
             font-size: 25px;
             font-weight: bold;
             color: black;
+            margin-bottom: 10px;
         }
 
         .flex_use {
@@ -202,7 +204,66 @@ if (isset($_POST['submit'])) {
             box-shadow: 0 3px 3px rgba(0, 0, 0, 0.1);
         }
 
-        /* about */
+        .ticket {
+            width: 100%;
+            overflow-x: scroll;
+            overflow-y: hidden;
+            margin-left: 50px;
+        }
+
+        .ticket_content {
+            display: flex;
+            flex-direction: row;
+            justify-content: left;
+            align-items: flex-start;
+            gap: 3rem;
+
+            width: 100vw;
+        }
+
+        .ticket_content .ticket_item {
+            background: white;
+            border: 1px solid rgba(222, 226, 230, 0.5);
+            border-radius: 12px;
+            box-shadow: 0 3px 3px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            width: 50vh;
+            margin-bottom: 20px;
+            padding: 50px 15px;
+            /* Width of each ticket item */
+        }
+
+        .ticket_content .ticket_item .ticket_header1 h4 span {
+            display: inline-block;
+            width: 60px;
+        }
+
+        .ticket_content .ticket_item .ticket_header2 {
+            text-align: right;
+
+        }
+
+        .ticket_content .ticket_item .ticket_header2 h5 span {
+            display: inline-block;
+            width: 100px;
+            text-align: left;
+
+        }
+
+        .ticket_content .ticket_item .ticket_footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .ticket_content .ticket_item table tr td:nth-child(2),
+        .ticket_content .ticket_item table tr td:nth-child(3),
+        .ticket_content .ticket_item table tr th:nth-child(2),
+        .ticket_content .ticket_item table tr th:nth-child(3)
+        {
+            text-align: right;
+        }
+
+
         .about {
             display: flex;
             flex-direction: column;
@@ -272,10 +333,9 @@ if (isset($_POST['submit'])) {
             font-size: 20px;
             text-decoration: none;
             font-weight: bold;
-
-
         }
     </style>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
 <body>
@@ -290,9 +350,13 @@ if (isset($_POST['submit'])) {
                     <a href="#home">
                         <li class="active"><i class='bx bxs-home'></i>Home</li>
                     </a>
+                    <a href="#ticket">
+                        <li><i class='bx bx-credit-card-alt'></i>Ticket</li>
+                    </a>
                     <a href="#about">
                         <li><i class='bx bx-group'></i>About</li>
                     </a>
+
                 </ul>
             </header>
         </div>
@@ -374,7 +438,7 @@ if (isset($_POST['submit'])) {
 
                     <div class="second_div" style="width:100%;">
                         <div class="weekly_movie">
-                            <h2 id="tit">တစ်ပတ်အတွင်းပြသမည့် ဇာတ်ကားများ</h2>
+                            <h2 class="tit">တစ်ပတ်အတွင်းပြသမည့် ဇာတ်ကားများ</h2>
                             <div class="flex_use" style="overflow-x:auto;">
                                 <?php
                                 //Weekly Movie (date and time)
@@ -424,7 +488,7 @@ if (isset($_POST['submit'])) {
                         </div>
 
                         <div class="hot_movie">
-                            <h2 id="tit">လူကြိုက်များသည့် ဇာတ်ကားများ</h2>
+                            <h2 class="tit">လူကြိုက်များသည့် ဇာတ်ကားများ</h2>
                             <div class="flex_use">
                                 <?php
                                 $sql = mysqli_query($connection, "
@@ -456,9 +520,59 @@ if (isset($_POST['submit'])) {
                     </div>
                 </div>
             </section>
+            
 
+            <section id="ticket" class="ticket">
+                <h2 class="tit">Tickets</h2>
+                <div class="ticket_content" id="ticket_content">
+
+                    <div class="image_holder_content" style="display:none;">
+                        <div role="status" class="space-y-8 animate-pulse md:space-y-0 md:space-x-8 rtl:space-x-reverse md:flex md:items-center">
+                            <div class="flex items-center justify-center w-full h-48 bg-gray-300 rounded sm:w-96 dark:bg-gray-700">
+                                <svg class="w-10 h-10 text-gray-200 dark:text-gray-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 18">
+                                    <path d="M18 0H2a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2Zm-5.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Zm4.376 10.481A1 1 0 0 1 16 15H4a1 1 0 0 1-.895-1.447l3.5-7A1 1 0 0 1 7.468 6a.965.965 0 0 1 .9.5l2.775 4.757 1.546-1.887a1 1 0 0 1 1.618.1l2.541 4a1 1 0 0 1 .028 1.011Z" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                    
+
+            </section>
+            <script>
+                fetch_ticket();
+
+                function getDeviceId() {
+                    let deviceId = localStorage.getItem('device_id');
+                    if (!deviceId) {
+                        deviceId = 'device-' + Math.random().toString(36).substr(2, 16);
+                        localStorage.setItem('device_id', deviceId);
+
+                    }
+                    return deviceId;
+                }
+
+                function fetch_ticket() {
+                    var uID = getDeviceId();
+                    // Make sure the values are valid before making the request
+                    if (uID) {
+                        var xhr = new XMLHttpRequest();
+                        xhr.open("POST", "get_ticket.php", true);
+                        xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
+                        // When the request completes, update the second select box
+                        xhr.onload = function() {
+                            if (this.status == 200) {
+                                document.getElementById("ticket_content").innerHTML = this.responseText;
+                            }
+                        };
+
+                        // Send the request with the selected values
+                        xhr.send("uID=" + uID);
+                    }
+                }
+            </script>
             <section class="about" id="about" style="padding-left: 50px;">
-                <!-- Section 1 -->
+
                 <div class="about-section">
                     <img src="../Photo/daung.jfif" alt="Team member 1" class="about-image">
                     <div class="about-content">
