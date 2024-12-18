@@ -553,6 +553,8 @@ if (isset($_GET['id'])) {
             var show_id = document.getElementById('show_id').innerText;
             var cinema_id = document.querySelector('#cinema_id').innerText;
             // alert(uID+','+show_id+','+cinema_id+','+seat_id_list);
+            // window.location.href = "index.php?uID=" + encodeURIComponent(uID);
+            
 
             $.ajax({
                 url: "../Model/buydb.php",
