@@ -13,13 +13,12 @@ header {
     box-shadow: 0 3px 3px rgba(0, 0, 0, 0.1);
     backdrop-filter: blur(10px);
 }
-header .logo p{
+/* header .logo p{
     text-align: center;
     font-weight: bold;
     font-size: 30px;
     color: black;
-    /* margin-top: 100px; */
-}
+} */
 header .menu{
     padding: 0;
     margin: 0;
