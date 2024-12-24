@@ -1,6 +1,6 @@
-# Cinema Ticket Website
+# Cinema Website
 
-Welcome to the **Cinema Ticket Website**! This platform allows users to browse movies, view showtimes, and book tickets for their favorite films. Whether you're looking to watch the latest blockbuster or enjoy a classic, this website makes it easy to book tickets for cinemas near you.
+Welcome to the **Cinema Website**! This platform allows users to browse movies, view showtimes, and book tickets for their favorite films. Whether you're looking to watch the latest blockbuster or enjoy a classic, this website makes it easy to book tickets for cinemas near you.
 
 ---
 
@@ -68,17 +68,17 @@ To get started with this project, clone the repository to your local machine.
 
 2. **Set up the Database**:
    - Open **phpMyAdmin** by navigating to `http://localhost/phpmyadmin` in your browser.
-   - Create a new database called `cinema_ticket_booking`.
+   - Create a new database called `cinemadb`.
    - Import the SQL file (`database.sql`) from the project directory into phpMyAdmin to set up the necessary tables.
 
 3. **Move the Project Files**:
-   - Place the cloned repository in the `htdocs` folder of your XAMPP installation (e.g., `C:\xampp\htdocs\cinema-ticket-booking`).
+   - Place the cloned repository in the `htdocs` folder of your XAMPP installation (e.g., `C:\xampp\htdocs\cinema`).
 
 4. **Start the Servers**:
    - Launch **XAMPP Control Panel**, and start both **Apache** and **MySQL**.
 
 5. **Access the Website**:
-   - Open your browser and go to `http://localhost/cinema-ticket-booking/` to see the website in action.
+   - Open your browser and go to `http://localhost/cinema/` to see the website in action.
 
 ---
 
