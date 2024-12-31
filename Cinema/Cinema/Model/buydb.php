@@ -26,11 +26,13 @@ if (isset($_POST['uID'], $_POST['cinema_id'], $_POST['show_id'], $_POST['seat_id
 
     if (count($buy_seat_id_list) > 0) {
         $json_string = json_encode($buy_seat_id_list);
+        $token = generateShortToken(4).'-'.generateShortToken(4).'-'.generateShortToken(4);
+
         $userID = mysqli_real_escape_string($connection, $_POST['uID']);
         $cinemaID = mysqli_real_escape_string($connection, $_POST['cinema_id']);
         $showID = mysqli_real_escape_string($connection, $_POST['show_id']);
-        $ticket_insert_sql = "INSERT INTO ticket (user_id, cinema_id, show_id, seat_id_list, `date`) 
-                              VALUES ('$userID', '$cinemaID', '$showID', '$json_string', '$today')";
+        $ticket_insert_sql = "INSERT INTO ticket (id,user_id, cinema_id, show_id, seat_id_list, `date`) 
+                              VALUES ('$token','$userID', '$cinemaID', '$showID', '$json_string', '$today')";
 
         if (mysqli_query($connection, $ticket_insert_sql)) {
             $response = array(
@@ -44,7 +46,11 @@ if (isset($_POST['uID'], $_POST['cinema_id'], $_POST['show_id'], $_POST['seat_id
     }
     mysqli_close($connection);
 }
+function generateShortToken($length) {
+    return substr(bin2hex(random_bytes($length / 2)), 0, $length);
+}
 
+// Example usage
 function buyseat($id, $cinema_id, $show_id, $seat_id, $today, $price, $currentTime)
 {
     global $connection;

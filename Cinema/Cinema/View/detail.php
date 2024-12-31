@@ -589,10 +589,10 @@ if (isset($_GET['id'])) {
                 <p class="score">Score : <span><?php echo $total_res ?> out of 10</span></p>
             </div>
 
-            <button type="button" id="a">TRAILER</button>
-            <script>
+            <a href="<?php echo $row['trailer_url'] ?>"><button type="button" id="a">TRAILER</button></a>
+            <!-- <script>
                 var youtubeUrl = "<?php echo $row['trailer_url'] ?>";
-            </script>
+            </script> -->
         </div>
         <div class="title_btn" style="height:10%;">
             <p id="seat_btn" class="active-btn"><button type="button">Seat</button></p>

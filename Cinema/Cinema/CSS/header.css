@@ -1,11 +1,8 @@
 
 header {
     position:relative;
-    /* z-index: 200; */
-    /* width: 300px; */
     height: 90vh;
-    margin-top: 20px;
-    margin-bottom: 20px;
+    place-content: center;
     margin-left: 20px;
     background: white;
     border: 1px solid rgba(222, 226, 230, 0.5);
@@ -13,12 +10,7 @@ header {
     box-shadow: 0 3px 3px rgba(0, 0, 0, 0.1);
     backdrop-filter: blur(10px);
 }
-/* header .logo p{
-    text-align: center;
-    font-weight: bold;
-    font-size: 30px;
-    color: black;
-} */
+
 header .menu{
     padding: 0;
     margin: 0;
@@ -39,23 +31,19 @@ header ul li {
     padding: 10px 10px;
     border-radius: 15px;
 }
-/* li:hover{
-    background: linear-gradient(120deg, #1e90ff, #87cefa);
-    color: #ffffff;
-    box-shadow: 0 6px 12px rgba(30, 144, 255, 0.3);
-} */
-.active {
-    border: solid .5px #bdbfc1;
-    background: #dee2e6;
-    color: #0c0c0c;
-    box-shadow: 0 3px 3px rgba(0, 0, 0, 0.1);
-}
 header ul li:hover{
     border: solid .5px #bdbfc1;
     background: #dee2e6;
     color: #0c0c0c;
     box-shadow: 0 3px 3px rgba(0, 0, 0, 0.1);
 }
+header .active {
+    border: solid .5px #bdbfc1;
+    background: #dee2e6;
+    color: #0c0c0c;
+    box-shadow: 0 3px 3px rgba(0, 0, 0, 0.1);
+}
+
 .bx{
     color: black  ;
     margin-left: 10px;

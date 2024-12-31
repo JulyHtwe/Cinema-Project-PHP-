@@ -11,7 +11,6 @@ if (isset($_POST['city'])) {
     while ($row = mysqli_fetch_assoc($result)) {
         $options .= "<option value='" . $row['branch'] . "'>" . htmlspecialchars($row['branch']) . "</option>";
     }
-
     echo $options;
 }
 ?>

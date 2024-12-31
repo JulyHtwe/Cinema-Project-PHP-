@@ -19,7 +19,10 @@ if (isset($_POST['city']) && isset($_POST['branch']) && isset($_POST['movie_id']
     $city_id = $_POST['city'];
     $branch_id = $_POST['branch'];
     $movieId = $_POST['movie_id'];
-    // Use the received values in the query
+    $today = date("Y-m-d");
+    $cinema_id="";
+    $show_id="";
+
     $query = "SELECT seat.id as id,seat.seat as seat,seat.seat_row as seat_row,seat.seat_column as seat_column,seat.type as seat_type,seat.price as price
               FROM show2
               JOIN cinema
@@ -28,7 +31,8 @@ if (isset($_POST['city']) && isset($_POST['branch']) && isset($_POST['movie_id']
               ON show2.room_id=seat.room_id AND show2.cinema_id=seat.cinema_id
               WHERE cinema.city = '$city_id'
               AND cinema.branch = '$branch_id'
-              AND show2.movie_id = '$movieId'";  // Example for the third value
+              AND show2.movie_id = '$movieId'
+              AND CURDATE() BETWEEN show2.start_date AND show2.end_date";
     $buyseat_query = "SELECT buyseat.id as id,buyseat.seat_id as seat_id,buyseat.date as 'date',cinema.id as cinema_id,show2.id as show_id
               FROM show2
               JOIN cinema
@@ -37,15 +41,16 @@ if (isset($_POST['city']) && isset($_POST['branch']) && isset($_POST['movie_id']
               ON show2.id=buyseat.show_id AND show2.cinema_id=buyseat.cinema_id
               WHERE cinema.city = '$city_id'
               AND cinema.branch = '$branch_id'
-              AND show2.movie_id = '$movieId'";
+              AND show2.movie_id = '$movieId'
+              AND CURDATE() = buyseat.date";
 
     $result = mysqli_query($connection, $query);
     $buyseat_result = mysqli_query($connection, $buyseat_query);
     while ($row = mysqli_fetch_assoc($buyseat_result)) {
         $seat = new Seat($row['seat_id'], $row['date']);
         $seats[] = $seat;
-        $cinema_id=$row['cinema_id'];
-        $show_id=$row['show_id'];
+        $cinema_id = $row['cinema_id'];
+        $show_id = $row['show_id'];
     }
 
     $seat_id_list = json_decode($_POST['seat_id_list'], true);
@@ -61,11 +66,7 @@ if (isset($_POST['city']) && isset($_POST['branch']) && isset($_POST['movie_id']
                 $options .= "<div class='col m-0 p-0'><p>" . $row_name[$j] . "</p></div>";
             } else {
                 $flag = true;
-
-                // Reset result pointer to the start of the result set
                 mysqli_data_seek($result, 0);
-
-                // Loop through fetched rows and check seat positions
                 while ($row = mysqli_fetch_assoc($result)) {
                     if ($row['seat_row'] == $row_name[$j] && $row['seat_column'] == $i) {
                         $bought = false;
@@ -112,10 +113,8 @@ if (isset($_POST['city']) && isset($_POST['branch']) && isset($_POST['movie_id']
         }
 
         $options .= " </div>";
-        
     }
 
 
-    echo $options.="<p id='cinema_id' style='display:none'>".$cinema_id."</p> <p id='show_id' style='display:none'>".$show_id."</p>";
+    echo $options .= "<p id='cinema_id' style='display:none'>" . $cinema_id . "</p> <p id='show_id' style='display:none'>" . $show_id . "</p>";
 }
-

@@ -1,51 +1,57 @@
 <?php
 include('../Model/db.php');
-// Ensure that the uID is properly retrieved from the query string
+
 $uID = isset($_POST['uID']) ? $_POST['uID'] : '';
+$start_date = isset($_POST['start_date']) ? $_POST['start_date'] : '';
+$end_date = isset($_POST['end_date']) ? $_POST['end_date'] : '';
+$start_date_obj = DateTime::createFromFormat('Y-m-d', $start_date);
+$end_date_obj = DateTime::createFromFormat('Y-m-d', $end_date);
+$start_date_formatted = $start_date_obj->format('Y-m-d');
+$end_date_formatted = $end_date_obj->format('Y-m-d');
 if ($uID) {
-
-    // Make sure $uID is safe to use in the query (prevent SQL injection)
     $uID = mysqli_real_escape_string($connection, $uID);
+    $options = '';
 
-    // Query to get the seat_id_list for the given user
-
-    $options = "<div class='ticket_item'>
-                        <div class='ticket_header1'>
-                            <h1><b>Mingalar Cinema</b></h1>";
-
-    $ticket_sql = mysqli_query($connection, "SELECT seat_id_list FROM ticket WHERE user_id = '$uID'");
+    $ticket_sql = mysqli_query($connection, "SELECT id,seat_id_list,watched FROM ticket WHERE user_id = '$uID' AND date BETWEEN '$start_date_formatted' AND '$end_date_formatted'");
     if ($ticket_sql->num_rows > 0) {
         while ($ticket_row = $ticket_sql->fetch_assoc()) {
-            $seat_id_list = json_decode(json: $ticket_row['seat_id_list']);
+            $token = $ticket_row['id'];
+            $watched = $ticket_row['watched'];
+            $seat_id_list = json_decode($ticket_row['seat_id_list']);
             $count = 0;
             $total = 0;
+            $options .= "<div class='ticket_item' style='width:400px'>
+                            <div class='ticket_receipt'>
+                            <div class='ticket_header1'>
+                            <h1 style='font-size:1.5rem;'><b>Mingalar Cinema</b></h1>
+                            <p style='border-bottom:1px solid gray;line-height:2rem;margin-bottom:0.5rem;border-top:1px solid gray;margin-top:0.5rem;'><span>Token</span>:" . $ticket_row['id'] . "</p>
+                                ";
+            $seat_ids = implode(',', array_map('intval', $seat_id_list));
+            $query = "
+                SELECT seat.seat AS seat, seat.seat_row AS seat_row, seat.type AS type, seat.price AS price,
+                       cinema.branch AS branch, cinema.city AS city, show2.time AS time, 
+                       movie.title AS title, movie.display AS display, buyseat.date AS date
+                FROM seat
+                JOIN buyseat ON buyseat.seat_id = seat.id
+                JOIN cinema ON buyseat.cinema_id = cinema.id
+                JOIN show2 ON buyseat.show_id = show2.id
+                JOIN movie ON movie.id = show2.movie_id
+                WHERE buyseat.id IN ($seat_ids)
+            ";
 
-            // print_r($seatlist);
-            foreach ($seat_id_list as $seat_id) {
-
-
-                $ticket_sql = mysqli_query($connection, "
-                    SELECT seat.seat as seat, seat.seat_row as seat_row, seat.type as type, seat.price as price, cinema.branch as branch, cinema.city as city, 
-                    show2.time as time, movie.title as title, movie.display as display, buyseat.date as date
-                    FROM seat JOIN buyseat ON buyseat.seat_id=seat.id
-                    JOIN cinema ON buyseat.cinema_id = cinema.id
-                    JOIN show2 ON buyseat.show_id = show2.id
-                    JOIN movie ON movie.id = show2.movie_id 
-                    WHERE buyseat.id=$seat_id
-                    ");
-
-                while ($ticket_sql_res = mysqli_fetch_assoc($ticket_sql)) {
+            $ticket_sql_res = mysqli_query($connection, $query);
+            if (mysqli_num_rows($ticket_sql_res) > 0) {
+                while ($row = mysqli_fetch_assoc($ticket_sql_res)) {
                     if ($count == 0) {
-                        $options .= "<h4><span>Branch </span>:" . $ticket_sql_res['branch'] . ',' . $ticket_sql_res['city'] . "</h4>
-                                    <h4><span>Room </span>:" . $ticket_sql_res['display'] . "</h4>
-                                    <h1>" . $ticket_sql_res['title'] . "</h1>
+                        $options .= "<p><span>Branch </span>:" . htmlspecialchars($row['branch']) . ', ' . htmlspecialchars($row['city']) . "</p>
+                                     <p><span>Room </span>:" . htmlspecialchars($row['display']) . "</p>
+                                     <h5>" . htmlspecialchars($row['title']) . "</h5>
                                     </div>
-
                                     <div class='ticket_header2'>
-                                    <h5>Date : <span>" . $ticket_sql_res['date'] . "</span></h5>
-                                        <h5>Show Time : <span>" . $ticket_sql_res['time'] . "</span></h5>
-                                    </div>";
-                        $options .= "<div class='ticket_body'>
+                                        <p>Date : <span>" . htmlspecialchars($row['date']) . "</span></p>
+                                        <p>Show Time : <span>" . htmlspecialchars($row['time']) . "</span></p>
+                                    </div>
+                                    <div class='ticket_body'>
                                         <table class='table'>
                                             <thead>
                                                 <tr>
@@ -57,77 +63,42 @@ if ($uID) {
                                             <tbody>";
                     }
                     $options .= "<tr>
-                                    <td>" . $ticket_sql_res['seat_row'] . " " . $ticket_sql_res['seat'] . "</td>
-                                    <td>" . $ticket_sql_res['type'] . "</td>
-                                    <td>" . $ticket_sql_res['price'] . "</td>
+                                    <td>" . htmlspecialchars($row['seat_row']) . " " . htmlspecialchars($row['seat']) . "</td>
+                                    <td>" . htmlspecialchars($row['type']) . "</td>
+                                    <td>" . htmlspecialchars($row['price']) . "</td>
                                 </tr>";
-
-                    $total += $ticket_sql_res['price'];
-
-                    if ($count == count($seat_id_list) - 1) {
-                        $options .= "<tr>
-                                         <td><b>Total</b></td>
-                                         <td colspan='2'><b>" . $total . "</b></td>
-                                    </tr> 
-                                    </tbody>
-                                    </table>
-                                    </div>
-                                    <div class='ticket_footer'>
-                                        <h5>Time : " . $ticket_sql_res['time'] . "</h5>
-                                        <button class='btn btn-primary'>Print</button>
-                                    </div>";
-                    }
+                    $total += $row['price'];
+                    $time = $row['time'];
 
                     $count++;
                 }
+                $options .= "<tr>
+                                 <td><b>Total</b></td>
+                                 <td colspan='2'><b>" . htmlspecialchars($total) . "</b></td>
+                            </tr>
+                            </tbody>
+                            </table>
+                            </div>
+                            <div class='ticket_footer'>
+                                <p>Time : " . htmlspecialchars($time) . "</p>
+
+                            </div>
+                            </div>";
             }
+            if ($watched === 'false') {
+                $barcodeData = $token;
+                $barcodeType = '128'; // Supported types: C128, EAN13, UPC-A, etc.
+
+                // Generate barcode using an API
+                $barcodeUrl = "https://barcodeapi.org/api/{$barcodeType}/{$barcodeData}";
+                $options .= "
+                <div class='ticket_receipt mt-1 text-center'>
+                                        <img style='width:100%;height:5rem' src=" . $barcodeUrl . " alt='Barcode'>
+                                </div>
+                ";
+            }
+            $options .= "</div>";
         }
     }
-    echo $options .= " </div>
-                </div>";
+    echo $options;
 }
-                //     <div class="ticket_item">
-                //         <div class="ticket_header1">
-                //             <h1><b>Mingalar Cinema</b></h1>
-                //             <h4><span>Branch </span>: 2, Taungoo</h4>
-                //             <h4><span>Room </span>: 2D</h4>
-                //             <h1>Tha Bin Thal Mya Hnin Si 2</h1>
-                //         </div>
-
-                //         <div class="ticket_header2">
-                //             <h5>Date : <span>2024-09-11</span></h5>
-                //             <h5>Show Time : <span>10:00 am</span></h5>
-                //         </div>
-                //         <div class="ticket_body">
-                //             <table class="table table-hover">
-                //                 <thead>
-                //                     <tr>
-                //                         <th scope="col">Seat</th>
-                //                         <th scope="col">Type</th>
-                //                         <th scope="col">Price</th>
-                //                     </tr>
-                //                 </thead>
-                //                 <tbody>
-                //                     <tr>
-                //                         <td>Mark</td>
-                //                         <td>Otto</td>
-                //                         <td>@mdo</td>
-                //                     </tr>
-                //                     <tr>
-                //                         <td>Jacob</td>
-                //                         <td>Thornton</td>
-                //                         <td>@fat</td>
-                //                     </tr>
-                //                     <tr>
-                //                         <td>Total</td>
-                //                         <td colspan="2">12000</td>
-                //                     </tr>
-                //                 </tbody>
-                //             </table>
-                //         </div>
-                //         <div class="ticket_footer">
-                //             <h5>Time : 02:37:47 PM</h5>
-                //             <button>Print</button>
-                //         </div>
-                //     </div>
-                // </div>
